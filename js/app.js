@@ -51,26 +51,43 @@ var c = canvas.getContext('2d');
 // 	c.stroke();
 // }
 
+// animate with mouse move
+
+var mouse = {}
+
+window.addEventListener('mousemove',
+	function(event){
+		mouse.x = event.x;
+		mouse.y = event.y;
+})
+
 // animating a circle
 // to make more than one circle with 
 // different values the Circle object is made
+var maxRadius = 40;
+var minRadius = 5;
+
+var colorArray = ['#7DCEA0','#5DADE2','#F4D03F','#E74C3C','#E59866'];
+
 function Circle(x, y, dx, dy, radius){
 	this.x = x;
 	this.y = y;
 	this.dx = dx;
 	this.dy = dy;
 	this.radius = radius;
+	this.color = colorArray[Math.floor(Math.random()*colorArray.length)];
 
 	this.draw = function(){
 		c.beginPath();
 		c.arc(this.x,this.y,this.radius,0,6.28319,false);
-		c.strokeStyle = 'blue';
-		c.stroke();
+		c.fillStyle = this.color;
+		c.fill();
 	}
 
 	this.update = function(){
 		// we are calling it to draw first and then move around
 		this.draw();
+
 		// to make the circle bounce from the right wall
 		// radius is added or sub to the x position because x is lies in
 		// the center of the circle and it bounces off the 
@@ -87,13 +104,23 @@ function Circle(x, y, dx, dy, radius){
 		// or negetive for directions.
 		this.x += this.dx;
 		this.y += this.dy;
+
+		// interactivity
+		if (mouse.x - this.x < 50 && mouse.x - this.x > -50
+			&& mouse.y - this.y < 50 && mouse.y - this.y > -50){
+			if(this.radius < maxRadius){
+				this.radius += 1;
+			}
+		}else if(this.radius > minRadius){
+			this.radius -= 1;
+		}
 	}
 }
 
 // to store all our circle
 var circleArray = [];
 
-for (var i = 0; i < 100; i++) {
+for (var i = 0; i < (innerWidth/5); i++) {
 	// randomized values for each circle
 	var x =Math.random() * (window.innerWidth - radius*2) + radius;
 	var dx = (Math.random()-0.5); // to change the velocity of the circle
@@ -123,6 +150,7 @@ function animate(){
 	for (var i = 0; i < circleArray.length; i++) {
 		circleArray[i].update();
 	}
+
 /* ************* FOR ONE CIRCLE ONLY ******************
 	//to avoid making line of lot of circles
 	// we need to clear the canvas so that it looks
@@ -156,5 +184,4 @@ function animate(){
 */
 
 }
-
 animate();
