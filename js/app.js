@@ -52,20 +52,29 @@ var c = canvas.getContext('2d');
 // }
 
 // animate with mouse move
-
+// mouse object has x , y position of the 
+// mouse as property
 var mouse = {}
 
+// track the postition of the mouse with mouse move
 window.addEventListener('mousemove',
 	function(event){
 		mouse.x = event.x;
 		mouse.y = event.y;
 })
 
+// change the size of the canvasd wrt size of the window
+window.addEventListener('resize', function(){
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+
+	createCircle();
+})
+
 // animating a circle
 // to make more than one circle with 
 // different values the Circle object is made
 var maxRadius = 40;
-var minRadius = 5;
 
 var colorArray = ['#7DCEA0','#5DADE2','#F4D03F','#E74C3C','#E59866'];
 
@@ -75,6 +84,7 @@ function Circle(x, y, dx, dy, radius){
 	this.dx = dx;
 	this.dy = dy;
 	this.radius = radius;
+	this.minRadius = radius;
 	this.color = colorArray[Math.floor(Math.random()*colorArray.length)];
 
 	this.draw = function(){
@@ -111,7 +121,7 @@ function Circle(x, y, dx, dy, radius){
 			if(this.radius < maxRadius){
 				this.radius += 1;
 			}
-		}else if(this.radius > minRadius){
+		}else if(this.radius > this.minRadius){
 			this.radius -= 1;
 		}
 	}
@@ -120,16 +130,24 @@ function Circle(x, y, dx, dy, radius){
 // to store all our circle
 var circleArray = [];
 
-for (var i = 0; i < (innerWidth/5); i++) {
-	// randomized values for each circle
-	var x =Math.random() * (window.innerWidth - radius*2) + radius;
-	var dx = (Math.random()-0.5); // to change the velocity of the circle
-	var y = Math.random() * (window.innerHeight - radius*2) + radius;
-	var dy = (Math.random()-0.5);
-	var radius = 30; //this is the circle radius
+// this function creates new circles  
+function createCircle(){
+	// clear the array so that when resizing the window
+	// old circles won't added up
+	circleArray = [];
 
-	// pushing each newly created circle in the array
-	circleArray.push(new Circle(x,y,dx,dx,radius));
+	for (var i = 0; i < (innerWidth/5); i++) {
+		// randomized values for each circle
+		var x =Math.random() * (window.innerWidth - radius*2) + radius;
+		var dx = (Math.random()-0.5); // to change the velocity of the circle
+		var y = Math.random() * (window.innerHeight - radius*2) + radius;
+		var dy = (Math.random()-0.5);
+		var radius = Math.random() * 5 + 3; //this is the circle radius
+
+		// pushing each newly created circle in the array
+		circleArray.push(new Circle(x,y,dx,dx,radius));
+	}
+
 }
 
 /* ************** FOR ONE CIRCLE ONLY ******************
@@ -184,4 +202,7 @@ function animate(){
 */
 
 }
+// we are calling the createCircle so that
+// circle will generate the first time
+createCircle();
 animate();
